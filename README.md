@@ -1,12 +1,7 @@
-# Meu Financeiro
+# Controle Financeiro
 
-Projeto independente: Supabase + GitHub + Cloudflare Pages.
+Versão completa baseada no layout do Controle Financeiro V5, com Supabase Auth + banco permanente.
 
-1. Crie um projeto novo no Supabase.
-2. Execute `schema.sql` no SQL Editor.
-3. Cole Project URL e Publishable/anon key em `js/config.js`.
-4. Crie um repositório GitHub separado e envie os arquivos.
-5. No Cloudflare: Workers & Pages > Create > Pages > Connect to Git > escolha o repositório.
-6. Branch: main. Build command: `exit 0`. Output directory: `.`.
-7. No Supabase Authentication > URL Configuration, coloque o endereço final do Cloudflare como Site URL.
-8. Nunca coloque service_role/secret key no frontend.
+Arquivos: `index.html`, `css/style.css`, `js/` e `schema.sql`.
+
+O projeto não usa localStorage para lançamentos.

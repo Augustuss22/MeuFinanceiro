@@ -1,27 +1,79 @@
-<!doctype html><html lang="pt-BR"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#171717"><link rel="manifest" href="manifest.json"><link rel="stylesheet" href="css/style.css">
-<title>Meu Financeiro</title></head><body>
-<header><div><small>CONTROLE FINANCEIRO</small><h1>Meu Financeiro</h1></div><button id="logout" class="ghost hidden">Sair</button></header>
-<main>
-<section id="auth" class="card"><h2 id="authTitle">Entrar</h2><p id="authSub">Acesse sua conta.</p>
-<form id="authForm"><label>Email<input id="email" type="email" required></label><label>Senha<input id="password" type="password" minlength="6" required></label><button class="primary">Entrar</button></form>
-<button id="toggle" class="link">Criar uma conta</button><p id="authMsg"></p></section>
-<section id="app" class="hidden">
-<div class="month"><button id="prev">‹</button><h2 id="month"></h2><button id="next">›</button></div>
-<div class="cards"><article><span>Saldo da conta</span><strong id="balance">R$ 0,00</strong><small>Entradas − PIX</small></article>
-<article><span>Cartão usado</span><strong id="used">R$ 0,00</strong><div class="bar"><i id="bar"></i></div><small id="limit">Limite: R$ 0,00</small></article></div>
-<div class="actions"><button data-type="income">＋ Entrada</button><button data-type="expense">− Saída</button></div>
-<section class="panel"><div class="head"><h3>Lançamentos</h3><button id="cardSettings" class="ghost">Limite do cartão</button></div><div id="list"></div><p id="empty" class="empty">Nenhum lançamento neste mês.</p></section>
-<section class="panel"><h3>Resumo</h3><div class="stats"><div>Entradas<b id="income">R$ 0,00</b></div><div>PIX<b id="pix">R$ 0,00</b></div><div>Cartão<b id="card">R$ 0,00</b></div><div>Futuros<b id="future">R$ 0,00</b></div></div></section>
-</section></main><button id="fab" class="fab hidden">＋</button>
-<div id="txModal" class="modal hidden"><div class="modalBox"><button class="close" data-close="txModal">×</button><h2 id="txTitle">Novo lançamento</h2>
-<form id="txForm"><input id="editId" type="hidden"><input id="type" type="hidden"><label>Descrição<input id="desc" required></label>
-<div class="two"><label>Valor total<input id="amount" type="number" min=".01" step=".01" required></label><label>Data<input id="date" type="date" required></label></div>
-<div class="two"><label>Categoria<select id="category"><option>Alimentação</option><option>Transporte</option><option>Casa</option><option>Compras</option><option>Saúde</option><option>Lazer</option><option>Educação</option><option>Assinaturas</option><option>Contas</option><option>Outros</option></select></label>
-<label>Pagamento<select id="payment"><option value="pix">PIX / Conta</option><option value="credit_card">Cartão</option></select></label></div>
-<label id="instWrap">Parcelas<select id="inst"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></label>
-<label>Observação<textarea id="note"></textarea></label><button class="primary">Salvar</button><button type="button" id="del" class="danger hidden">Excluir</button><p id="txMsg"></p></form></div></div>
-<div id="setModal" class="modal hidden"><div class="modalBox"><button class="close" data-close="setModal">×</button><h2>Cartão de crédito</h2><form id="setForm"><label>Limite<input id="creditLimit" type="number" min="0" step=".01" required></label><button class="primary">Salvar limite</button></form></div></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="js/config.js"></script><script src="js/auth.js"></script><script src="js/database.js"></script><script src="js/calculations.js"></script><script src="js/app.js"></script>
-</body></html>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#242929">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="stylesheet" href="./css/style.css">
+<title>Controle Financeiro</title>
+</head>
+<body>
+<section id="authScreen" class="auth-screen">
+  <div class="auth-card">
+    <div class="auth-kicker">CONTROLE FINANCEIRO</div>
+    <h1 id="authTitle">Entrar</h1>
+    <p id="authSubtitle" class="muted">Acesse sua conta para continuar.</p>
+    <form id="authForm">
+      <label>Email</label><input id="authEmail" type="email" autocomplete="email" required>
+      <label>Senha</label><input id="authPassword" type="password" autocomplete="current-password" minlength="6" required>
+      <button class="primary" type="submit" id="authSubmit">Entrar</button>
+    </form>
+    <button class="secondary auth-toggle" id="authToggle" type="button">Criar uma conta</button>
+    <div id="authMessage" class="auth-message"></div>
+  </div>
+</section>
+<div class="app" id="appRoot" style="display:none">
+<header><div><h1>Controle Financeiro</h1><div class="muted">Conta e cartão separados.</div></div><div style="display:flex;gap:6px"><button id="logout" class="secondary">Sair</button><button id="erase" class="secondary">Limpar</button></div></header>
+<div class="tabs"><button class="tab active" data-tab="resumo">Resumo</button><button class="tab" data-tab="lancamentos">Lançamentos</button><button class="tab" data-tab="mensal">Gastos mensais</button><button class="tab" data-tab="graficos">Gráficos</button></div>
+
+<section class="card summary">
+<div class="muted" style="color:#fff" id="periodLabel">Saldo da conta</div>
+<div class="total" id="saldo">R$ 0,00</div>
+<div class="balance-note">Saldo real da conta: entradas + saídas em PIX. Compras no cartão não alteram este valor.</div>
+<div class="stats"><div class="stat"><small>Entradas</small><b id="entradas">R$ 0,00</b></div><div class="stat"><small>Saídas PIX</small><b id="saidasPix">R$ 0,00</b></div><div class="stat"><small>Cartão no mês</small><b id="cartaoMes">R$ 0,00</b></div><div class="stat"><small>Limite usado</small><b id="limitePct">0%</b></div></div>
+</section>
+
+<section id="resumo" class="view active">
+<div class="card">
+<h2>Cartão de crédito</h2>
+<div class="limitbox">
+<div class="limithead"><div><div class="muted">Limite disponível</div><div class="limitvalue" id="limiteDisp">R$ 0,00</div></div><div style="text-align:right"><div class="muted">Fatura/uso atual</div><b id="usoCartao">R$ 0,00</b></div></div>
+<div class="progress"><div class="progressbar" id="bar"></div></div>
+<div class="progressinfo"><span id="barText">0% utilizado</span><span id="limiteTotal">Limite: R$ 0,00</span></div>
+<div class="limitedit"><input id="limiteInput" type="number" min="0" step="0.01" placeholder="Ex.: 3000"><button class="secondary" id="saveLimit">Salvar limite</button></div>
+</div>
+<p class="muted" style="margin:10px 0 0">O limite é editável diretamente aqui. Compras parceladas consomem somente as parcelas previstas para cada mês.</p>
+</div>
+
+<div class="card">
+<h2>Adicionar lançamento</h2>
+<form id="addForm">
+<div class="type"><input id="tGasto" type="radio" name="tipo" value="gasto" checked><label for="tGasto">− Gasto</label><input id="tEntrada" type="radio" name="tipo" value="entrada"><label for="tEntrada">+ Entrada</label></div>
+<div class="row"><div><label>Data</label><input id="fData" type="date" required></div><div><label>Valor</label><input id="fValor" type="number" step="0.01" min="0.01" placeholder="30,00" required></div></div>
+<label>Categoria</label><select id="fCategoria" required></select>
+<div id="pagamentoArea"><label>Pagamento</label><div class="pay"><input id="pPix" type="radio" name="pag" value="PIX" checked><label for="pPix">PIX</label><input id="pCard" type="radio" name="pag" value="Cartão de crédito"><label for="pCard">Cartão de crédito</label></div>
+<div id="parcelasArea" class="installment" style="display:none"><label>Parcelamento</label><select id="fParcelas"><option value="1">À vista — 1x</option><option value="2">2x</option><option value="3">3x</option><option value="4">4x</option><option value="5">5x</option><option value="6">6x</option></select></div></div>
+<label>Observação</label><input id="fObs" maxlength="120" placeholder="Ex.: lanche, mercado, gasolina...">
+<button class="primary" type="submit">Adicionar lançamento</button>
+</form>
+</div>
+<div class="card"><h2>Últimos lançamentos</h2><div id="recent"></div></div>
+</section>
+
+<section id="lancamentos" class="view"><div class="card"><h2>Lançamentos</h2><div class="filters"><input id="fMes" type="month"><select id="fTipo"><option value="">Entradas e gastos</option><option value="gasto">Gastos</option><option value="entrada">Entradas</option></select></div><select id="fCat" style="margin-top:8px"><option value="">Todas as categorias</option></select><div id="all"></div></div></section>
+
+<section id="mensal" class="view"><div class="card"><h2>Gastos mensais</h2><label>Mês</label><input id="mMes" type="month"><div id="monthly"></div><p class="muted">Parcelas de cartão aparecem automaticamente nos meses seguintes. O total desta aba é separado do saldo da conta.</p></div></section>
+
+<section id="graficos" class="view"><div class="card"><h2>Gastos por categoria</h2><label>Mês</label><input id="gMes" type="month"><div class="chartbox"><canvas id="chart"></canvas></div><div id="legend" class="legend"></div></div></section>
+</div>
+<div class="footer"><button class="primary" id="new">+ Novo lançamento</button></div><div id="toast" class="toast"></div>
+<div id="modal" class="modal"><div class="modalin"><button id="close" class="secondary" style="float:right">Fechar</button><h2>Editar lançamento</h2><form id="editForm"><input id="eId" type="hidden"><label>Tipo</label><select id="eTipo"><option value="gasto">Gasto</option><option value="entrada">Entrada</option></select><label>Data</label><input id="eData" type="date" required><label>Valor total</label><input id="eValor" type="number" step=".01" min=".01" required><label>Categoria</label><select id="eCat"></select><div id="editPayBox"><label>Pagamento</label><select id="ePag"><option>PIX</option><option>Cartão de crédito</option></select><label>Parcelas</label><select id="eParcelas"><option value="1">À vista — 1x</option><option value="2">2x</option><option value="3">3x</option><option value="4">4x</option><option value="5">5x</option><option value="6">6x</option></select></div><label>Observação</label><input id="eObs"><button class="primary" type="submit">Salvar alterações</button></form></div></div>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("./sw.js").catch(()=>{})}</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./js/config.js"></script>
+<script src="./js/auth.js"></script>
+<script src="./js/database.js"></script>
+<script src="./js/app.js"></script>
+</body>
+</html>
