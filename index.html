@@ -1,0 +1,27 @@
+<!doctype html><html lang="pt-BR"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#171717"><link rel="manifest" href="manifest.json"><link rel="stylesheet" href="css/style.css">
+<title>Meu Financeiro</title></head><body>
+<header><div><small>CONTROLE FINANCEIRO</small><h1>Meu Financeiro</h1></div><button id="logout" class="ghost hidden">Sair</button></header>
+<main>
+<section id="auth" class="card"><h2 id="authTitle">Entrar</h2><p id="authSub">Acesse sua conta.</p>
+<form id="authForm"><label>Email<input id="email" type="email" required></label><label>Senha<input id="password" type="password" minlength="6" required></label><button class="primary">Entrar</button></form>
+<button id="toggle" class="link">Criar uma conta</button><p id="authMsg"></p></section>
+<section id="app" class="hidden">
+<div class="month"><button id="prev">‹</button><h2 id="month"></h2><button id="next">›</button></div>
+<div class="cards"><article><span>Saldo da conta</span><strong id="balance">R$ 0,00</strong><small>Entradas − PIX</small></article>
+<article><span>Cartão usado</span><strong id="used">R$ 0,00</strong><div class="bar"><i id="bar"></i></div><small id="limit">Limite: R$ 0,00</small></article></div>
+<div class="actions"><button data-type="income">＋ Entrada</button><button data-type="expense">− Saída</button></div>
+<section class="panel"><div class="head"><h3>Lançamentos</h3><button id="cardSettings" class="ghost">Limite do cartão</button></div><div id="list"></div><p id="empty" class="empty">Nenhum lançamento neste mês.</p></section>
+<section class="panel"><h3>Resumo</h3><div class="stats"><div>Entradas<b id="income">R$ 0,00</b></div><div>PIX<b id="pix">R$ 0,00</b></div><div>Cartão<b id="card">R$ 0,00</b></div><div>Futuros<b id="future">R$ 0,00</b></div></div></section>
+</section></main><button id="fab" class="fab hidden">＋</button>
+<div id="txModal" class="modal hidden"><div class="modalBox"><button class="close" data-close="txModal">×</button><h2 id="txTitle">Novo lançamento</h2>
+<form id="txForm"><input id="editId" type="hidden"><input id="type" type="hidden"><label>Descrição<input id="desc" required></label>
+<div class="two"><label>Valor total<input id="amount" type="number" min=".01" step=".01" required></label><label>Data<input id="date" type="date" required></label></div>
+<div class="two"><label>Categoria<select id="category"><option>Alimentação</option><option>Transporte</option><option>Casa</option><option>Compras</option><option>Saúde</option><option>Lazer</option><option>Educação</option><option>Assinaturas</option><option>Contas</option><option>Outros</option></select></label>
+<label>Pagamento<select id="payment"><option value="pix">PIX / Conta</option><option value="credit_card">Cartão</option></select></label></div>
+<label id="instWrap">Parcelas<select id="inst"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></label>
+<label>Observação<textarea id="note"></textarea></label><button class="primary">Salvar</button><button type="button" id="del" class="danger hidden">Excluir</button><p id="txMsg"></p></form></div></div>
+<div id="setModal" class="modal hidden"><div class="modalBox"><button class="close" data-close="setModal">×</button><h2>Cartão de crédito</h2><form id="setForm"><label>Limite<input id="creditLimit" type="number" min="0" step=".01" required></label><button class="primary">Salvar limite</button></form></div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="js/config.js"></script><script src="js/auth.js"></script><script src="js/database.js"></script><script src="js/calculations.js"></script><script src="js/app.js"></script>
+</body></html>
